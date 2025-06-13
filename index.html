@@ -93,6 +93,14 @@
             margin-top: 1rem;
             text-align: center;
         }
+        .error-message-llm {
+            background-color: #fce2e2; /* Light red for errors */
+            color: #cc0000; /* Darker red text */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -107,6 +115,12 @@
 
     <main class="py-16">
         <div class="max-w-4xl mx-auto space-y-20 px-4">
+
+            <!-- API Key Warning Message -->
+            <div id="apiKeyWarning" class="message-box hidden">
+                <p class="font-bold">¡Atención! Falta la clave de API de Gemini.</p>
+                <p>Para que las actividades prácticas funcionen, debes obtener tu clave de API de Gemini en <a href="https://aistudio.google.com/app/apikey" target="_blank" class="underline">Google AI Studio</a> y pegarla en el código donde dice <code class="font-mono">const apiKey = "TU_API_KEY_AQUI";</code>.</p>
+            </div>
 
             <!-- Section 1: The Divine Ideal -->
             <section id="ideal">
@@ -567,6 +581,20 @@
                 const exerciseContainer = button.nextElementSibling;
                 const exerciseTextElement = exerciseContainer.querySelector('.exercise-text');
                 const loadingIndicator = exerciseContainer.querySelector('.llm-loading');
+                const apiKeyWarning = document.getElementById('apiKeyWarning');
+
+                // Check for API Key before making the call
+                const apiKey = "AIzaSyDuNSd6su36eoFT7m2FzJWyqOvosqnopko"; // REEMPLAZA ESTO CON TU CLAVE DE API REAL DE GEMINI
+                if (!apiKey || apiKey === "TU_API_KEY_AQUI" || apiKey.trim() === "") {
+                    apiKeyWarning.classList.remove('hidden');
+                    exerciseContainer.classList.add('hidden'); // Hide the exercise box if no key
+                    exerciseTextElement.textContent = '';
+                    loadingIndicator.classList.add('hidden');
+                    apiKeyWarning.scrollIntoView({ behavior: 'smooth' });
+                    return;
+                } else {
+                    apiKeyWarning.classList.add('hidden'); // Hide warning if key is present
+                }
 
                 exerciseContainer.classList.remove('hidden');
                 exerciseTextElement.textContent = '';
@@ -576,8 +604,8 @@
                 let chatHistory = [];
                 chatHistory.push({ role: "user", parts: [{ text: prompt }] });
                 const payload = { contents: chatHistory };
-                const apiKey = "" 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                // Using the provided apiKey directly
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`; 
 
                 try {
                     const response = await fetch(apiUrl, {
