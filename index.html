@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     
-    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Chosen Palette: Certificate Achievement (White, Gold, Deep Blue, Dark Grey) -->
     <!-- Application Structure Plan: The SPA is designed as a single-page scrolling journey. It starts with a Hero section stating the core principle. It then moves to "The Divine Ideal" to establish the 'why'. Next, the "Challenge of Inequality" section uses interactive charts to present the 'what' (the problems). "Fostering Equality" provides the 'how' through interactive tabs with practical principles. The centerpiece is the "Interactive Self-Assessment", turning the static quiz into a dynamic tool for self-reflection. It concludes with an "Action Plan" section for personal commitment. This structure guides the user from understanding to application in a logical, engaging flow. -->
     <!-- Visualization & Content Choices: 
         - Report Info: Data on marriage problems. Goal: Compare key obstacles. Viz: Horizontal Bar Chart (Chart.js). Interaction: Tooltips on hover. Justification: Bar charts are excellent for comparing categorical data percentages clearly. Library: Chart.js.
@@ -18,6 +18,7 @@
         - Report Info: Principles for equality. Goal: Organize dense text. Viz: Tabbed Interface (HTML/CSS/JS). Interaction: Clicking tabs reveals content. Justification: Prevents a "wall of text" and allows users to focus on one principle at a time. Method: Vanilla JS.
         - Report Info: Equality in Marriage Quiz. Goal: Create an engaging self-assessment. Viz: Interactive form with a summary Radar Chart (Chart.js). Interaction: Users click radio buttons, scores are calculated, and a chart is generated on demand. Justification: Turns a passive quiz into an active, insightful tool, a key "wow" factor. Library: Chart.js.
         - NEW LLM Feature: Report Info: Principles for equality. Goal: Generate actionable exercises based on principles. Viz: Text output in a dedicated area. Interaction: Button click triggers LLM call; provides loading feedback. Justification: Enhances practical application and engagement. Library: Gemini API (gemini-2.0-flash).
+        - NEW Feature: Commitment Display. Goal: Visually highlight user's personal commitment. Viz: Large, styled text block. Interaction: Button click reveals and populates the block. Justification: Provides a dramatic and memorable presentation of the user's chosen action plan. Method: HTML/CSS (Tailwind)/JS.
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 
@@ -101,6 +102,106 @@
             margin-top: 1rem;
             text-align: center;
         }
+        /* Majestic Commitment Box Styling (Certificate/Diploma look) */
+        .majestic-commitment-box {
+            background-color: #FFFFFF; /* Pure white for certificate paper look */
+            color: #333333; /* Dark text for readability */
+            border: 5px solid #D4AF37; /* Gold border for certificate feel */
+            border-radius: 1.5rem; /* Soft rounded corners */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25), 0 5px 15px rgba(0, 0, 0, 0.1); /* Stronger, elegant shadow */
+            padding: 3rem;
+            text-align: center;
+            margin-top: 4rem;
+            transition: all 0.7s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother, more pronounced transition */
+            transform: scale(0.8); /* Start smaller */
+            opacity: 0; /* Start hidden */
+            position: relative;
+            overflow: hidden; /* For pseudo-elements */
+            display: flex; /* Flexbox for centering content inside */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 250px; /* Ensure a minimum height */
+        }
+        /* Sparkling effects for the certificate */
+        .majestic-commitment-box::before {
+            content: '✨';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 3rem; /* Larger sparkle */
+            opacity: 0.7;
+            z-index: 1;
+            color: #FFD700; /* Gold color for sparkles */
+        }
+        .majestic-commitment-box::after {
+            content: '🌟';
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            font-size: 3rem; /* Larger sparkle */
+            opacity: 0.7;
+            z-index: 1;
+            color: #FFD700; /* Gold color for sparkles */
+        }
+        .majestic-commitment-box.visible {
+            transform: scale(1);
+            opacity: 1;
+        }
+        /* Adjusted H3 for labels */
+        .majestic-commitment-box h3 {
+            color: #1A2B40; /* Deep Blue for labels, formal */
+            font-size: 1.75rem; /* Smaller than main content */
+            font-weight: 700; /* Bold enough to be clear */
+            margin-bottom: 0.5rem; /* Reduce space below labels */
+            text-shadow: none; /* No shadow for labels */
+        }
+        /* Prominent P for actual commitment text */
+        .majestic-commitment-box p {
+            font-size: 2.5rem; /* Significantly larger */
+            font-weight: 800; /* Extra bold */
+            line-height: 1.3;
+            margin-bottom: 2rem; /* More space below commitment */
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.15); /* A bit more text shadow for pop */
+            position: relative; /* For potential emojis inside p */
+            padding: 0.5rem 1rem; /* Padding for the text */
+            border-radius: 0.5rem;
+            /* No background color for content to keep clean certificate look */
+            background-color: transparent; 
+        }
+        .majestic-commitment-box #displayPrinciple {
+            color: #4A5568; /* Dark slate grey for principle */
+            font-style: italic; /* Add italic for a touch of elegance */
+        }
+        .majestic-commitment-box #displayActionStep {
+            color: #B8860B; /* Dark Goldenrod for action, strong contrast */
+            font-weight: 900; /* Even bolder for action */
+        }
+        /* No emojis in the commitment text */
+        .majestic-commitment-box #displayPrinciple::before,
+        .majestic-commitment-box #displayPrinciple::after,
+        .majestic-commitment-box #displayActionStep::before,
+        .majestic-commitment-box #displayActionStep::after {
+            content: ''; 
+        }
+
+        @media (max-width: 768px) {
+            .majestic-commitment-box {
+                padding: 1.5rem; /* Adjusted padding for mobile */
+            }
+            .majestic-commitment-box h3 {
+                font-size: 1.5rem;
+                margin-bottom: 0.25rem;
+            }
+            .majestic-commitment-box p {
+                font-size: 1.75rem; /* Adjusted text size for mobile */
+                margin-bottom: 1.5rem;
+            }
+            .majestic-commitment-box::before,
+            .majestic-commitment-box::after {
+                font-size: 2rem;
+            }
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -109,7 +210,6 @@
         <div class="max-w-4xl mx-auto text-center px-4">
             <h1 class="text-4xl md:text-5xl font-bold accent-text">Juntos a la Par</h1>
             <p class="mt-4 text-xl text-gray-600">Cultivando la Igualdad y la Unidad en el Matrimonio</p>
-            <p class="mt-2 text-md text-gray-500">Con sus anfitriones, John y Xiomara</p>
         </div>
     </header>
 
@@ -297,12 +397,20 @@
                         <input type="text" id="principle" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-rose-300 focus:border-rose-300" placeholder="Ej: Tomar decisiones de común acuerdo">
                     </div>
                     <div class="mt-4">
-                        <label for="action_step" class="block mb-2 font-semibold text-gray-700">Nuestra acción concreta esta semana será:</label>
-                        <textarea id="action_step" rows="4" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-rose-300 focus:border-rose-300" placeholder="Ej: Dedicar 15 minutos el domingo para planificar juntos los gastos de la semana."></textarea>
+                        <label for="action_step" class="block mb-2 font-semibold text-gray-700">Nuestra acción concreta será:</label>
+                        <textarea id="action_step" rows="4" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-300 focus:border-rose-300" placeholder="Ej: Planificar juntos los gastos de la semana."></textarea>
                     </div>
                      <div class="mt-6 text-center">
                         <p class="text-gray-600 italic">"El dedicar tiempo y energías para fomentar la unidad y la igualdad, brindará nueva vitalidad a su matrimonio."</p>
+                        <button type="button" id="showCommitmentBtn" class="mt-6 bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-6 rounded-lg transition shadow-md accent-bg">🌟 ¡Ver Nuestro Compromiso!</button>
                     </div>
+                </div>
+                <!-- Majestic Commitment Display -->
+                <div id="majesticCommitment" class="majestic-commitment-box mx-auto max-w-xl hidden">
+                    <h3 class="font-extrabold mb-4">Nuestra Meta:</h3>
+                    <p id="displayPrinciple" class="font-bold mb-6"></p>
+                    <h3 class="font-extrabold mb-4">Nuestro Compromiso de Acción:</h3>
+                    <p id="displayActionStep" class="font-bold"></p>
                 </div>
             </section>
 
@@ -311,8 +419,8 @@
 
     <footer class="bg-gray-800 text-white py-8">
         <div class="max-w-4xl mx-auto text-center px-4">
-            <p>&copy; 2025 Juntos a la Par. Inspirado en el manual "Fortaleciendo el Matrimonio".</p>
-            <p class="text-sm text-gray-400 mt-2">Un recurso para fomentar el amor, la igualdad y la unidad.</p>
+            <p class="text-sm text-gray-400">&copy; 2025 Juntos a la Par. Inspirado en el manual "Fortaleciendo el Matrimonio".</p>
+            <p class="text-xs text-gray-500 mt-1">Facilitadores John y Xiomara</p>
         </div>
     </footer>
 
@@ -570,10 +678,10 @@
         });
 
         const prompts = [
-            "Genera una idea de ejercicio práctico muy corta y sencilla (una frase o punto claro) para una pareja casada sobre cómo fortalecer el amor y el respeto mutuo. Incluye 1-2 emojis alusivos al ejercicio. Sin usar asteriscos ni formato Markdown.",
-            "Genera una idea de ejercicio práctico muy corta y sencilla (una frase o punto claro) para que un esposo presida con rectitud, promoviendo unidad e igualdad. Incluye 1-2 emojis alusivos al ejercicio. Sin usar asteriscos ni formato Markdown.",
-            "Genera una idea de ejercicio práctico muy corta y sencilla (una frase o punto claro) para que una pareja identifique y supere la tendencia a ejercer injusto dominio. Incluye 1-2 emojis alusivos al ejercicio. Sin usar asteriscos ni formato Markdown.",
-            "Genera una idea de ejercicio práctico muy corta y sencilla (una frase o punto claro) para que una pareja practique la toma de decisiones de común acuerdo. Incluye 1-2 emojis alusivos al ejercicio. Sin usar asteriscos ni formato Markdown."
+            "Genera una única idea de actividad práctica, muy corta y sencilla (una frase o punto claro) para una pareja casada (miembros de La Iglesia de Jesucristo de los Santos de los Últimos Días) sobre cómo fortalecer el amor y el respeto mutuo. Asegúrate de que la actividad no involucre café, alcohol u otras sustancias prohibidas por la Palabra de Sabiduría. Debe ser algo inspirador y que las parejas puedan hacer regularmente, no siempre religioso. Incluye un emoji alusivo. Concéntrate solo en la acción inspiradora y hazla fácil de entender. Ej: 'Caminen juntos por el parque y compartan sus pensamientos. 🌳'",
+            "Genera una única idea de actividad práctica, muy corta y sencilla (una frase o punto claro) para que un esposo presida con rectitud, promoviendo unidad e igualdad con su esposa (miembros de La Iglesia de Jesucristo de los Santos de los Últimos Días). Asegúrate de que la actividad no involucre café, alcohol u otras sustancias prohibidas por la Palabra de Sabiduría. Debe ser algo inspirador y que las parejas puedan hacer regularmente, no siempre religioso. Incluye un emoji alusivo. Concéntrate solo en la acción inspiradora y hazla fácil de entender. Ej: 'Planifiquen juntos una actividad de servicio para la comunidad. 🤝'",
+            "Genera una única idea de actividad práctica, muy corta y sencilla (una frase o punto claro) para que una pareja (miembros de La Iglesia de Jesucristo de los Santos de los Últimos Días) identifique y supere la tendencia a ejercer injusto dominio. Asegúrate de que la actividad no involucre café, alcohol u otras sustancias prohibidas por la Palabra de Sabiduría. Debe ser algo inspirador y que las parejas puedan hacer regularmente, no siempre religioso. Incluye un emoji alusivo. Concéntrate solo en la acción inspiradora y hazla fácil de entender. Ej: 'En una discusión, cada uno intente resumir la postura del otro antes de responder. 🕊️'",
+            "Genera una única idea de actividad práctica, muy corta y sencilla (una frase o punto claro) para que una pareja (miembros de La Iglesia de Jesucristo de los Santos de los Últimos Días) practique la toma de decisiones de común acuerdo. Asegúrate de que la actividad no involucre café, alcohol u otras sustancias prohibidas por la Palabra de Sabiduría. Debe ser algo inspirador y que las parejas puedan hacer regularmente, no siempre religioso. Incluye un emoji alusivo. Concéntrate solo en la acción inspiradora y hazla fácil de entender. Ej: 'Planifiquen su próxima cita nocturna considerando las preferencias de ambos. �'"
         ];
 
         document.querySelectorAll('.generate-exercise-btn').forEach((button, index) => {
@@ -634,7 +742,44 @@
                 }
             });
         });
+
+        // New functionality for Majestic Commitment Display
+        const showCommitmentBtn = document.getElementById('showCommitmentBtn');
+        const majesticCommitment = document.getElementById('majesticCommitment');
+        const displayPrinciple = document.getElementById('displayPrinciple');
+        const displayActionStep = document.getElementById('displayActionStep');
+        const principleInput = document.getElementById('principle');
+        const actionStepInput = document.getElementById('action_step');
+
+        showCommitmentBtn.addEventListener('click', () => {
+            const principle = principleInput.value.trim();
+            const action = actionStepInput.value.trim();
+
+            if (principle === "" || action === "") {
+                const messageBox = document.createElement('div');
+                messageBox.className = 'message-box mt-4';
+                messageBox.textContent = 'Por favor, completa tanto el principio como la acción antes de mostrar tu compromiso.';
+                majesticCommitment.parentNode.insertBefore(messageBox, majesticCommitment);
+                
+                // Hide message after a few seconds
+                setTimeout(() => {
+                    messageBox.remove();
+                }, 5000);
+                majesticCommitment.classList.add('hidden'); // Ensure it's hidden if inputs are empty
+                majesticCommitment.classList.remove('visible');
+                return;
+            }
+
+            displayPrinciple.textContent = `"${principle}"`; // Added quotes without emojis
+            displayActionStep.textContent = `"${action}"`; // Added quotes without emojis
+            majesticCommitment.classList.remove('hidden');
+            // Trigger reflow to restart animation
+            void majesticCommitment.offsetWidth; 
+            majesticCommitment.classList.add('visible');
+            majesticCommitment.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
     });
     </script>
 </body>
 </html>
+�
