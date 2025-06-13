@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juntos a la Par: Igualdad y Unidad en el Matrimonio</title>
+    <title>Cómo Promover la Igualdad y la Unidad</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,6 +19,7 @@
         - Report Info: Equality in Marriage Quiz. Goal: Create an engaging self-assessment. Viz: Interactive form with a summary Radar Chart (Chart.js). Interaction: Users click radio buttons, scores are calculated, and a chart is generated on demand. Justification: Turns a passive quiz into an active, insightful tool, a key "wow" factor. Library: Chart.js.
         - NEW LLM Feature: Report Info: Principles for equality. Goal: Generate actionable exercises based on principles. Viz: Text output in a dedicated area. Interaction: Button click triggers LLM call; provides loading feedback. Justification: Enhances practical application and engagement. Library: Gemini API (gemini-2.0-flash).
         - NEW Feature: Commitment Display. Goal: Visually highlight user's personal commitment. Viz: Large, styled text block. Interaction: Button click reveals and populates the block. Justification: Provides a dramatic and memorable presentation of the user's chosen action plan. Method: HTML/CSS (Tailwind)/JS.
+        - NEW Feature: Score Analysis. Goal: Provide actionable insights from self-assessment scores. Viz: Brief text paragraph below the chart. Interaction: Automated display after chart generation. Justification: Guides users to focus on specific areas for discussion/improvement based on their input. Method: Vanilla JS analysis of scores.
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 
@@ -202,14 +203,41 @@
                 font-size: 2rem;
             }
         }
+        .analysis-message {
+            background-color: #e0f2f7; /* Light blue for analysis */
+            color: #01579B; /* Darker blue text */
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin-top: 2rem;
+            text-align: left;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            border: 1px solid #B3E5FC;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .analysis-message strong {
+            color: #004D40; /* Even darker for emphasis */
+        }
     </style>
 </head>
 <body class="antialiased">
 
     <header class="py-12 bg-white shadow-sm">
         <div class="max-w-4xl mx-auto text-center px-4">
-            <h1 class="text-4xl md:text-5xl font-bold accent-text">Juntos a la Par</h1>
-            <p class="mt-4 text-xl text-gray-600">Cultivando la Igualdad y la Unidad en el Matrimonio</p>
+            <h1 class="text-4xl md:text-5xl font-bold accent-text">Cómo Promover la Igualdad y la Unidad</h1>
+            <p class="mt-4 text-xl text-gray-600">“No debe existir la inferioridad ni la superioridad entre esposo y esposa dentro del plan del señor”.
+
+</p>
+<br/>
+<p><em>Presidente Gordon B. Hinckley</em></p>
+            <div class="mt-8 text-lg text-gray-700">
+                <h2 class="text-2xl font-bold mb-2">Objetivos de la sesión:</h2>
+                <ul class="list-disc list-inside space-y-1 mx-auto text-left max-w-lg">
+                    <li>Entender que los cónyuges deben amarse y cuidarse el uno al otro como compañeros iguales en el matrimonio.</li>
+                    <li>Deshacerse del comportamiento y de las actitudes que promuevan la falta de igualdad y el injusto dominio.</li>
+                    <li>Entender que la felicidad más grande se puede alcanzar cuando el empeño de uno complementa el esfuerzo del otro y cuando afrontan y superan juntos las dificultades.</li>
+                </ul>
+            </div>
         </div>
     </header>
 
@@ -378,6 +406,7 @@
                         <div class="chart-container h-80 md:h-96 lg:h-[500px]">
                             <canvas id="resultsChart"></canvas>
                         </div>
+                        <div id="analysisResult" class="analysis-message hidden"></div>
                     </div>
                 </div>
             </section>
@@ -390,6 +419,15 @@
                         El <span class="font-bold">cambio duradero</span> nace de la intención y el compromiso. Después de reflexionar, es hora de actuar. Utiliza este espacio para formular un <span class="font-bold">plan específico</span> con tu pareja. Elijan un principio en el que quieran enfocarse y definan pasos concretos para ponerlo en práctica.
                     </p>
                 </div>
+                <!-- New section for the quote from President Benson -->
+                <div class="mt-12 bg-white p-6 rounded-lg shadow-md text-center">
+                    <h3 class="text-2xl font-bold mb-3 accent-text">El Secreto del Matrimonio Feliz: Servicio Mutuo</h3>
+                    <blockquote class="pl-4 py-2 mb-4">
+                        <p class="text-lg italic">"El secreto de un matrimonio feliz es servir a Dios y servirse mutuamente. La meta de un matrimonio es lograr la unidad y la integridad, así como el desarrollo individual. Aunque parezca lo contrario, cuanto más se sirvan el uno al otro, mayor será el progreso espiritual y emocional de cada uno de los cónyuges"</p>
+                    </blockquote>
+                    <p class="text-right font-medium secondary-text">- Presidente Ezra Taft Benson</p>
+                </div>
+                <!-- End of new section -->
                 <div class="mt-12 bg-white p-8 rounded-lg shadow-lg max-w-2xl mx-auto">
                     <h3 class="font-bold text-xl accent-text">Mi Compromiso de Unidad</h3>
                     <div class="mt-4">
@@ -675,13 +713,51 @@
             });
             
             document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth' });
+
+            // Analysis of results for discussion points
+            const analysisResultElement = document.getElementById('analysisResult');
+            let maxDiff = -1;
+            let maxDiffIndex = -1;
+            let minCombinedScore = 11; // Max possible combined score is 10 (5+5)
+            let minCombinedIndex = -1;
+
+            for (let i = 0; i < selfScores.length; i++) {
+                const diff = Math.abs(selfScores[i] - spouseScores[i]);
+                if (diff > maxDiff) {
+                    maxDiff = diff;
+                    maxDiffIndex = i;
+                }
+
+                const combined = selfScores[i] + spouseScores[i];
+                if (combined < minCombinedScore) {
+                    minCombinedScore = combined;
+                    minCombinedIndex = i;
+                }
+            }
+
+            let analysisText = "<p>¡Excelente! La autoevaluación es un gran paso hacia la comprensión mutua.</p>";
+
+            if (maxDiffIndex !== -1 && maxDiff > 1) { // Consider a difference of 2 or more significant
+                analysisText += `<p>Un punto clave para conversar es sobre <strong>"${assessmentQuestions[maxDiffIndex]}"</strong>, ya que parece haber una diferencia notable en cómo ustedes lo perciben. Abordar estas diferencias con amor y comprensión puede fortalecer su conexión.</p>`;
+            }
+
+            if (minCombinedIndex !== -1 && minCombinedScore <= 4) { // Combined score of 4 or less indicates a low area (e.g., 2+2, 1+3)
+                analysisText += `<p>Otro tema importante a tratar es <strong>"${assessmentQuestions[minCombinedIndex]}"</strong>. Esta área parece ser un punto de mejora para ambos, y trabajar juntos en ella puede traer un gran progreso en su unidad.</p>`;
+            }
+            
+            if (maxDiff <= 1 && minCombinedScore > 4) { // If no significant differences or low scores
+                analysisText += `<p>Sus percepciones son muy similares y sus puntuaciones generales son altas. Esto indica una sólida base de igualdad y unidad en su matrimonio. ¡Continúen cultivando estas fortalezas!</p>`;
+            }
+
+            analysisResultElement.innerHTML = analysisText;
+            analysisResultElement.classList.remove('hidden');
         });
 
         const prompts = [
-            "Genera una única idea de actividad práctica, muy corta y sencilla (una frase o punto claro) para una pareja casada (miembros de La Iglesia de Jesucristo de los Santos de los Últimos Días) sobre cómo fortalecer el amor y el respeto mutuo. Asegúrate de que la actividad no involucre café, alcohol u otras sustancias prohibidas por la Palabra de Sabiduría. Debe ser algo inspirador y que las parejas puedan hacer regularmente, no siempre religioso. Incluye un emoji alusivo. Concéntrate solo en la acción inspiradora y hazla fácil de entender. Ej: 'Caminen juntos por el parque y compartan sus pensamientos. 🌳'",
-            "Genera una única idea de actividad práctica, muy corta y sencilla (una frase o punto claro) para que un esposo presida con rectitud, promoviendo unidad e igualdad con su esposa (miembros de La Iglesia de Jesucristo de los Santos de los Últimos Días). Asegúrate de que la actividad no involucre café, alcohol u otras sustancias prohibidas por la Palabra de Sabiduría. Debe ser algo inspirador y que las parejas puedan hacer regularmente, no siempre religioso. Incluye un emoji alusivo. Concéntrate solo en la acción inspiradora y hazla fácil de entender. Ej: 'Planifiquen juntos una actividad de servicio para la comunidad. 🤝'",
-            "Genera una única idea de actividad práctica, muy corta y sencilla (una frase o punto claro) para que una pareja (miembros de La Iglesia de Jesucristo de los Santos de los Últimos Días) identifique y supere la tendencia a ejercer injusto dominio. Asegúrate de que la actividad no involucre café, alcohol u otras sustancias prohibidas por la Palabra de Sabiduría. Debe ser algo inspirador y que las parejas puedan hacer regularmente, no siempre religioso. Incluye un emoji alusivo. Concéntrate solo en la acción inspiradora y hazla fácil de entender. Ej: 'En una discusión, cada uno intente resumir la postura del otro antes de responder. 🕊️'",
-            "Genera una única idea de actividad práctica, muy corta y sencilla (una frase o punto claro) para que una pareja (miembros de La Iglesia de Jesucristo de los Santos de los Últimos Días) practique la toma de decisiones de común acuerdo. Asegúrate de que la actividad no involucre café, alcohol u otras sustancias prohibidas por la Palabra de Sabiduría. Debe ser algo inspirador y que las parejas puedan hacer regularmente, no siempre religioso. Incluye un emoji alusivo. Concéntrate solo en la acción inspiradora y hazla fácil de entender. Ej: 'Planifiquen su próxima cita nocturna considerando las preferencias de ambos. �'"
+            "Genera una única idea de actividad práctica, muy corta y sencilla (una frase o punto claro) para una pareja casada (miembros de La Iglesia de Jesucristo de los Santos de los Últimos Días) sobre cómo fortalecer el amor y el respeto mutuo. Asegúrate de que la actividad no involucre café, alcohol u otras sustancias prohibidas por la Palabra de Sabiduría. Debe ser algo inspirador y que las parejas puedan hacer regularmente, no siempre religioso. Incluye un emoji alusivo. Concéntrate solo en la acción inspiradora y hazla fácil de entender. Ej: 'Compartan una actividad que ambos disfruten, como un paseo tranquilo o una conversación profunda sobre sus sueños. 💕'",
+            "Genera una única idea de actividad práctica, muy corta y sencilla (una frase o punto claro) para que un esposo presida con rectitud, promoviendo unidad e igualdad con su esposa (miembros de La Iglesia de Jesucristo de los Santos de los Últimos Días). Asegúrate de que la actividad no involucre café, alcohol u otras sustancias prohibidas por la Palabra de Sabiduría. Debe ser algo inspirador y que las parejas puedan hacer regularmente, no siempre religioso. Incluye un emoji alusivo. Concéntrate solo en la acción inspiradora y hazla fácil de entender. Ej: 'Antes de tomar una decisión importante, pida primero la opinión de su esposa y valoren su perspectiva. 🤝'",
+            "Genera una única idea de actividad práctica, muy corta y sencilla (una frase o punto claro) para que una pareja (miembros de La Iglesia de Jesucristo de los Santos de los Últimos Días) identifique y supere la tendencia a ejercer injusto dominio. Asegúrate de que la actividad no involucre café, alcohol u otras sustancias prohibidas por la Palabra de Sabiduría. Debe ser algo inspirador y que las parejas puedan hacer regularmente, no siempre religioso. Incluye un emoji alusivo. Concéntrate solo en la acción inspiradora y hazla fácil de entender. Ej: 'En una discusión, cada uno intente resumir la postura del otro antes de responder, buscando comprender genuinamente. 🕊️'",
+            "Genera una única idea de actividad práctica, muy corta y sencilla (una frase o punto claro) para que una pareja (miembros de La Iglesia de Jesucristo de los Santos de los Últimos Días) practique la toma de decisiones de común acuerdo. Asegúrate de que la actividad no involucre café, alcohol u otras sustancias prohibidas por la Palabra de Sabiduría. Debe ser algo inspirador y que las parejas puedan hacer regularmente, no siempre religioso. Incluye un emoji alusivo. Concéntrate solo en la acción inspiradora y hazla fácil de entender. Ej: 'Planifiquen su próxima cita nocturna o una actividad de servicio familiar considerando las preferencias de ambos. 📅'"
         ];
 
         document.querySelectorAll('.generate-exercise-btn').forEach((button, index) => {
@@ -782,4 +858,3 @@
     </script>
 </body>
 </html>
-�
