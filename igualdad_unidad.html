@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juntos a la Par: Igualdad y Unidad en el Matrimonio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Application Structure Plan: The SPA is designed as a single-page scrolling journey. It starts with a Hero section stating the core principle. It then moves to "The Divine Ideal" to establish the 'why'. Next, the "Challenge of Inequality" section uses interactive charts to present the 'what' (the problems). "Fostering Equality" provides the 'how' through interactive tabs with practical principles. The centerpiece is the "Interactive Self-Assessment", turning the static quiz into a dynamic tool for self-reflection. It concludes with an "Action Plan" section for personal commitment. This structure guides the user from understanding to application in a logical, engaging flow. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Data on marriage problems. Goal: Compare key obstacles. Viz: Horizontal Bar Chart (Chart.js). Interaction: Tooltips on hover. Justification: Bar charts are excellent for comparing categorical data percentages clearly. Library: Chart.js.
+        - Report Info: Data on strengths of happy marriages. Goal: Compare key strengths. Viz: Horizontal Bar Chart (Chart.js). Interaction: Tooltips on hover. Justification: Complements the obstacles chart, showing the positive side. Library: Chart.js.
+        - Report Info: Principles for equality. Goal: Organize dense text. Viz: Tabbed Interface (HTML/CSS/JS). Interaction: Clicking tabs reveals content. Justification: Prevents a "wall of text" and allows users to focus on one principle at a time. Method: Vanilla JS.
+        - Report Info: Equality in Marriage Quiz. Goal: Create an engaging self-assessment. Viz: Interactive form with a summary Radar Chart (Chart.js). Interaction: Users click radio buttons, scores are calculated, and a chart is generated on demand. Justification: Turns a passive quiz into an active, insightful tool, a key "wow" factor. Library: Chart.js.
+        - NEW LLM Feature: Report Info: Principles for equality. Goal: Generate actionable exercises based on principles. Viz: Text output in a dedicated area. Interaction: Button click triggers LLM call; provides loading feedback. Justification: Enhances practical application and engagement. Library: Gemini API (gemini-2.0-flash).
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8; /* Warm off-white */
+            color: #4A4A4A;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (max-width: 640px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .nav-button-active {
+            background-color: #C08497; /* Dusty Rose */
+            color: #FFFFFF;
+        }
+        .nav-button-inactive {
+            background-color: #F1D4D4; /* Light Pink/Beige */
+            color: #C08497;
+        }
+        .accent-bg { background-color: #C08497; }
+        .accent-text { color: #C08497; }
+        .secondary-bg { background-color: #F1D4D4; }
+        .secondary-text { color: #8D5A68; }
+        blockquote {
+            border-left: 4px solid #F1D4D4;
+        }
+        .assessment-radio:checked + label {
+            background-color: #C08497;
+            color: white;
+            border-color: #C08497;
+        }
+        .assessment-radio:hover + label {
+            background-color: #f1d4d4;
+        }
+        .llm-loading {
+            display: inline-block;
+            border: 4px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 4px solid #C08497;
+            width: 20px;
+            height: 20px;
+            -webkit-animation: spin 2s linear infinite; /* Safari */
+            animation: spin 2s linear infinite;
+        }
+
+        /* Safari */
+        @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="py-12 bg-white shadow-sm">
+        <div class="max-w-4xl mx-auto text-center px-4">
+            <h1 class="text-4xl md:text-5xl font-bold accent-text">Juntos a la Par</h1>
+            <p class="mt-4 text-xl text-gray-600">Cultivando la Igualdad y la Unidad en el Matrimonio</p>
+        </div>
+    </header>
+
+    <main class="py-16">
+        <div class="max-w-4xl mx-auto space-y-20 px-4">
+
+            <!-- Section 1: The Divine Ideal -->
+            <section id="ideal">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold mb-4">El Ideal Divino de la Unión</h2>
+                    <p class="max-w-3xl mx-auto text-lg text-gray-700">
+                        Esta sección explora la base doctrinal y espiritual de por qué la igualdad y la unidad son fundamentales en el plan del Señor para el matrimonio. A través de las palabras de los profetas, entenderemos la visión sagrada de dos personas que caminan juntas como compañeros iguales en una jornada eterna.
+                    </p>
+                </div>
+                <div class="mt-12 grid md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <blockquote class="pl-4 py-2 mb-4">
+                            <p class="text-lg italic">"No debe existir la inferioridad ni la superioridad entre esposo y esposa dentro del plan del señor."</p>
+                        </blockquote>
+                        <p class="text-right font-medium secondary-text">- Presidente Gordon B. Hinckley</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-md">
+                        <blockquote class="pl-4 py-2 mb-4">
+                            <p class="text-lg italic">"Cuando el hombre y la mujer fueron creados, ¡la unión matrimonial no les fue dada como esperanza, sino como mandamiento!"</p>
+                        </blockquote>
+                        <p class="text-right font-medium secondary-text">- Élder Henry B. Eyring</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-md">
+                        <blockquote class="pl-4 py-2 mb-4">
+                            <p class="text-lg italic">"El hombre que posee el sacerdocio debe aceptar a su esposa como compañera en la dirección del hogar y de la familia..."</p>
+                        </blockquote>
+                        <p class="text-right font-medium secondary-text">- Presidente Howard W. Hunter</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-md">
+                        <blockquote class="pl-4 py-2 mb-4">
+                            <p class="text-lg italic">"Ni el hombre ni la mujer son perfectos o completos sin el otro... trabajen juntos en unidad de propósito..."</p>
+                        </blockquote>
+                        <p class="text-right font-medium secondary-text">- Hermana Sheri L. Dew</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: The Challenge of Inequality -->
+            <section id="desafio">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold mb-4">El Desafío de la Desigualdad: Datos y Realidades</h2>
+                     <p class="max-w-3xl mx-auto text-lg text-gray-700">
+                        Los datos revelan patrones claros sobre lo que fortalece o debilita un matrimonio. En esta sección interactiva, visualizaremos los resultados de estudios con miles de parejas. Explora los gráficos para ver cuáles son los obstáculos más comunes para la felicidad conyugal y, en contraste, cuáles son las fortalezas clave de los matrimonios felices.
+                    </p>
+                </div>
+                <div class="mt-12 grid lg:grid-cols-2 gap-16">
+                    <div>
+                        <h3 class="text-xl font-semibold text-center mb-4">Principales Obstáculos para la Felicidad Matrimonial</h3>
+                        <div class="chart-container h-96 md:h-[450px]">
+                            <canvas id="obstaclesChart"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-center mb-4">Principales Fortalezas de los Matrimonios Felices</h3>
+                         <div class="chart-container h-96 md:h-[450px]">
+                            <canvas id="strengthsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: Fostering Equality -->
+            <section id="principios">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold mb-4">Fomentando la Igualdad: Principios Prácticos</h2>
+                    <p class="max-w-3xl mx-auto text-lg text-gray-700">
+                        Lograr la unidad es un proceso activo. Esta sección presenta principios clave que pueden transformar su relación. Navega por las pestañas para descubrir consejos prácticos y enseñanzas inspiradoras sobre cómo amarse, respetarse, tomar decisiones juntos y superar la tendencia a dominar.
+                    </p>
+                </div>
+                <div class="mt-12">
+                    <div class="mb-4 flex flex-wrap justify-center gap-2">
+                        <button onclick="changeTab(0)" class="nav-button nav-button-active px-4 py-2 font-semibold rounded-lg transition">Amor y Respeto</button>
+                        <button onclick="changeTab(1)" class="nav-button nav-button-inactive px-4 py-2 font-semibold rounded-lg transition">Presidir con Rectitud</button>
+                        <button onclick="changeTab(2)" class="nav-button nav-button-inactive px-4 py-2 font-semibold rounded-lg transition">Evitar el Dominio</button>
+                        <button onclick="changeTab(3)" class="nav-button nav-button-inactive px-4 py-2 font-semibold rounded-lg transition">Decidir de Común Acuerdo</button>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="tab-content">
+                            <h3 class="text-2xl font-bold mb-3 accent-text">Amarse y respetarse mutuamente como compañeros iguales</h3>
+                            <p class="text-gray-700 mb-4">El presidente Hinckley enseñó que debemos andar "uno al lado del otro, con respeto, aprecio y amor el uno por el otro". El altruismo total es un nutriente esencial para el amor. Si se buscan constantemente los intereses, la comodidad y la felicidad del cónyuge, el amor crecerá en dimensiones inconmensurables.</p>
+                            <p class="text-gray-700"><span class="font-semibold">Nutrientes para el amor:</span> consideración, amabilidad, cortesía, preocupación, expresiones de afecto, admiración, confianza, fe, esfuerzo mutuo, igualdad e interdependencia.</p>
+                            <button class="generate-exercise-btn mt-4 bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-4 rounded-lg transition shadow-md flex items-center justify-center gap-2">✨ Generar Ejercicio Práctico</button>
+                            <div class="generated-exercise mt-4 p-4 bg-gray-50 rounded-md border border-gray-200 hidden">
+                                <p class="font-semibold secondary-text">Ejercicio Sugerido:</p>
+                                <p class="exercise-text text-gray-800 mt-2"></p>
+                                <div class="llm-loading mt-2 hidden"></div>
+                            </div>
+                        </div>
+                        <div class="tab-content hidden">
+                            <h3 class="text-2xl font-bold mb-3 accent-text">Presidir con rectitud</h3>
+                            <p class="text-gray-700 mb-4">Por designio divino, el padre preside con amor y rectitud. El élder L. Tom Perry explicó que esto implica una total unidad e igualdad: "En la familia no hay presidente ni vicepresidenta. Ambos cónyuges trabajan juntos eternamente por el bien de la familia... Se encuentran en igualdad de condiciones". Las relaciones deben guiarse por la persuasión, longanimidad, mansedumbre, amor y bondad (D. y C. 121:41–42).</p>
+                             <button class="generate-exercise-btn mt-4 bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-4 rounded-lg transition shadow-md flex items-center justify-center gap-2">✨ Generar Ejercicio Práctico</button>
+                            <div class="generated-exercise mt-4 p-4 bg-gray-50 rounded-md border border-gray-200 hidden">
+                                <p class="font-semibold secondary-text">Ejercicio Sugerido:</p>
+                                <p class="exercise-text text-gray-800 mt-2"></p>
+                                <div class="llm-loading mt-2 hidden"></div>
+                            </div>
+                        </div>
+                        <div class="tab-content hidden">
+                            <h3 class="text-2xl font-bold mb-3 accent-text">Reconocer y cambiar la tendencia a dominar</h3>
+                            <p class="text-gray-700 mb-4">La naturaleza de casi todos los hombres (y mujeres) es comenzar a ejercer injusto dominio al recibir un poco de autoridad. Esto puede manifestarse al controlar decisiones, dinero o la disciplina de los hijos sin la participación del cónyuge. Para cambiar, debemos cuestionar los pensamientos que sustentan esta conducta. Por ejemplo, en lugar de pensar "Si quiero que se haga bien, lo hago yo", podemos aprender a confiar y colaborar, reconociendo que los temores pueden ser exagerados.</p>
+                             <button class="generate-exercise-btn mt-4 bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-4 rounded-lg transition shadow-md flex items-center justify-center gap-2">✨ Generar Ejercicio Práctico</button>
+                            <div class="generated-exercise mt-4 p-4 bg-gray-50 rounded-md border border-gray-200 hidden">
+                                <p class="font-semibold secondary-text">Ejercicio Sugerido:</p>
+                                <p class="exercise-text text-gray-800 mt-2"></p>
+                                <div class="llm-loading mt-2 hidden"></div>
+                            </div>
+                        </div>
+                        <div class="tab-content hidden">
+                            <h3 class="text-2xl font-bold mb-3 accent-text">Tomen las decisiones de común acuerdo</h3>
+                            <p class="text-gray-700 mb-4">En un matrimonio sólido, las decisiones importantes que afectan a la familia se toman juntos. Esto requiere dejar de pensar solo en las necesidades personales y considerar el bienestar del grupo familiar. Cuando los cónyuges deliberan juntos con la ayuda del Espíritu Santo, la confianza crece y las decisiones son más sabias. El Espíritu de Dios nunca causa contención; une y unifica en propósito y acción.</p>
+                             <button class="generate-exercise-btn mt-4 bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-4 rounded-lg transition shadow-md flex items-center justify-center gap-2">✨ Generar Ejercicio Práctico</button>
+                            <div class="generated-exercise mt-4 p-4 bg-gray-50 rounded-md border border-gray-200 hidden">
+                                <p class="font-semibold secondary-text">Ejercicio Sugerido:</p>
+                                <p class="exercise-text text-gray-800 mt-2"></p>
+                                <div class="llm-loading mt-2 hidden"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 4: Self-Assessment -->
+            <section id="autoevaluacion">
+                 <div class="text-center">
+                    <h2 class="text-3xl font-bold mb-4">Autoevaluación Interactiva de la Relación</h2>
+                    <p class="max-w-3xl mx-auto text-lg text-gray-700">
+                       La reflexión honesta es el primer paso hacia el crecimiento. Utiliza esta herramienta para evaluar diferentes aspectos de la igualdad en tu matrimonio. Responde desde tu perspectiva y luego considera cómo crees que tu cónyuge te calificaría. Al final, podrás generar un resumen visual que te ayudará a identificar fortalezas y áreas de oportunidad para conversar en pareja.
+                    </p>
+                </div>
+                <div class="mt-12 bg-white p-6 md:p-8 rounded-lg shadow-lg">
+                    <form id="assessmentForm">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm md:text-base">
+                                <thead>
+                                    <tr class="border-b">
+                                        <th class="py-3 px-2 text-left font-semibold">Aspecto de la relación</th>
+                                        <th class="py-3 px-2 text-center font-semibold">Mis Puntos (1-5)</th>
+                                        <th class="py-3 px-2 text-center font-semibold">Puntos que creo me daría mi cónyuge (1-5)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                         <div class="mt-8 text-center">
+                            <button type="button" id="showResultsBtn" class="bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-6 rounded-lg transition shadow-md accent-bg">Mostrar Mi Resumen Visual</button>
+                        </div>
+                    </form>
+                    <div id="resultsContainer" class="hidden mt-8">
+                        <h3 class="text-xl font-semibold text-center mb-4">Resumen de mi Percepción vs. Percepción de mi Cónyuge</h3>
+                        <div class="chart-container h-80 md:h-96 lg:h-[500px]">
+                            <canvas id="resultsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5: Action Plan -->
+            <section id="plan">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold mb-4">Nuestro Plan de Acción</h2>
+                    <p class="max-w-3xl mx-auto text-lg text-gray-700">
+                        El cambio duradero nace de la intención y el compromiso. Después de reflexionar, es hora de actuar. Utiliza este espacio para formular un plan específico con tu pareja. Elijan un principio en el que quieran enfocarse y definan pasos concretos para ponerlo en práctica.
+                    </p>
+                </div>
+                <div class="mt-12 bg-white p-8 rounded-lg shadow-lg max-w-2xl mx-auto">
+                    <h3 class="font-bold text-xl accent-text">Mi Compromiso de Unidad</h3>
+                    <div class="mt-4">
+                        <label for="principle" class="block mb-2 font-semibold text-gray-700">El principio que elegimos fortalecer es:</label>
+                        <input type="text" id="principle" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-rose-300 focus:border-rose-300" placeholder="Ej: Tomar decisiones de común acuerdo">
+                    </div>
+                    <div class="mt-4">
+                        <label for="action_step" class="block mb-2 font-semibold text-gray-700">Nuestra acción concreta esta semana será:</label>
+                        <textarea id="action_step" rows="4" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-rose-300 focus:border-rose-300" placeholder="Ej: Dedicar 15 minutos el domingo para planificar juntos los gastos de la semana."></textarea>
+                    </div>
+                     <div class="mt-6 text-center">
+                        <p class="text-gray-600 italic">"El dedicar tiempo y energías para fomentar la unidad y la igualdad, brindará nueva vitalidad a su matrimonio."</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="max-w-4xl mx-auto text-center px-4">
+            <p>&copy; 2025 Juntos a la Par. Inspirado en el manual "Fortaleciendo el Matrimonio".</p>
+            <p class="text-sm text-gray-400 mt-2">Un recurso para fomentar el amor, la igualdad y la unidad.</p>
+        </div>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        
+        const tabs = document.querySelectorAll('.tab-content');
+        const navButtons = document.querySelectorAll('.nav-button');
+
+        window.changeTab = function(tabIndex) {
+            tabs.forEach((tab, index) => {
+                if (index === tabIndex) {
+                    tab.classList.remove('hidden');
+                } else {
+                    tab.classList.add('hidden');
+                }
+            });
+            navButtons.forEach((button, index) => {
+                if (index === tabIndex) {
+                    button.classList.replace('nav-button-inactive', 'nav-button-active');
+                } else {
+                    button.classList.replace('nav-button-active', 'nav-button-inactive');
+                }
+            });
+        };
+
+        const obstaclesData = {
+            labels: [
+                'Compartir el liderazgo es problemático', 
+                'Mi cónyuge es demasiado negativo(a) o crítico(a)', 
+                'Siempre termino sintiéndome responsable del problema', 
+                'Nunca terminamos de resolver nuestras diferencias'
+            ],
+            datasets: [{
+                label: '% de parejas que coinciden',
+                data: [93, 83, 81, 78],
+                backgroundColor: 'rgba(192, 132, 151, 0.6)',
+                borderColor: 'rgba(192, 132, 151, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const strengthsData = {
+            labels: [
+                'Estamos de acuerdo en cómo usar el dinero',
+                'Somos creativos al hacer frente a nuestras diferencias',
+                'Mi cónyuge casi nunca es mandón(a)'
+            ],
+            datasets: [{
+                label: '% de matrimonios felices que coinciden',
+                data: [89, 78, 78],
+                backgroundColor: 'rgba(112, 159, 176, 0.6)',
+                borderColor: 'rgba(112, 159, 176, 1)',
+                borderWidth: 1
+            }]
+        };
+        
+        const chartOptions = {
+            indexAxis: 'y',
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%'
+                        }
+                    }
+                },
+                y: {
+                   ticks: {
+                        autoSkip: false,
+                        callback: function(value) {
+                            const label = this.getLabelForValue(value);
+                            if (label.length > 25) {
+                                return label.match(/.{1,25}/g);
+                            }
+                            return label;
+                        }
+                   }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.dataset.label}: ${context.raw}%`;
+                        }
+                    }
+                }
+            }
+        };
+
+        new Chart(document.getElementById('obstaclesChart'), {
+            type: 'bar',
+            data: obstaclesData,
+            options: chartOptions
+        });
+
+        new Chart(document.getElementById('strengthsChart'), {
+            type: 'bar',
+            data: strengthsData,
+            options: chartOptions
+        });
+        
+        const assessmentQuestions = [
+            "Guío a mi familia de acuerdo con las pautas de las Escrituras.",
+            "Soy cariñoso con mi cónyuge e hijos y ellos sienten mi amor.",
+            "Respeto a los integrantes de mi familia y no soy iracundo.",
+            "Mi prioridad es tratar a mi cónyuge con amor y bondad.",
+            "Vivo de tal forma que mi cónyuge desea estar conmigo eternamente.",
+            "Trato a mi cónyuge como un compañero igual.",
+            "Vivo de modo tal que invito la influencia del Espíritu a nuestro hogar.",
+            "Intento solucionar los problemas por medio del consejo mutuo.",
+            "Me esfuerzo por entender y respetar los sentimientos de mi cónyuge.",
+            "Respeto la necesidad de espacio y privacidad de mi cónyuge.",
+            "Decidimos, como compañeros iguales, cómo usar el dinero.",
+            "Compartimos las responsabilidades domésticas.",
+            "Ayudo a mi cónyuge a desarrollar talentos y buscar intereses.",
+            "Tenemos las mismas metas espirituales y compromiso con el Evangelio.",
+            "Ambos impartimos disciplina a nuestros hijos.",
+            "Ambos nos sentimos bien con la responsabilidad de presidir del esposo."
+        ];
+
+        const formBody = document.querySelector('#assessmentForm tbody');
+        assessmentQuestions.forEach((question, index) => {
+            const row = document.createElement('tr');
+            row.className = 'border-b hover:bg-gray-50';
+            let ratingHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                ratingHtml += `
+                    <input type="radio" id="q${index}-self-${i}" name="q${index}-self" value="${i}" class="hidden assessment-radio">
+                    <label for="q${index}-self-${i}" class="cursor-pointer w-7 h-7 md:w-8 md:h-8 flex items-center justify-center border rounded-full transition">${i}</label>
+                `;
+            }
+            let spouseRatingHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                spouseRatingHtml += `
+                    <input type="radio" id="q${index}-spouse-${i}" name="q${index}-spouse" value="${i}" class="hidden assessment-radio">
+                    <label for="q${index}-spouse-${i}" class="cursor-pointer w-7 h-7 md:w-8 md:h-8 flex items-center justify-center border rounded-full transition">${i}</label>
+                `;
+            }
+            row.innerHTML = `
+                <td class="py-3 px-2">${question}</td>
+                <td class="py-3 px-2"><div class="flex justify-center gap-1 md:gap-2">${ratingHtml}</div></td>
+                <td class="py-3 px-2"><div class="flex justify-center gap-1 md:gap-2">${spouseRatingHtml}</div></td>
+            `;
+            formBody.appendChild(row);
+        });
+
+        let resultsChartInstance = null;
+        document.getElementById('showResultsBtn').addEventListener('click', () => {
+            const selfScores = [];
+            const spouseScores = [];
+            let allAnswered = true;
+            for(let i=0; i < assessmentQuestions.length; i++) {
+                const selfAnswer = document.querySelector(`input[name="q${i}-self"]:checked`);
+                const spouseAnswer = document.querySelector(`input[name="q${i}-spouse"]:checked`);
+                if (!selfAnswer || !spouseAnswer) {
+                    allAnswered = false;
+                    break;
+                }
+                selfScores.push(parseInt(selfAnswer.value));
+                spouseScores.push(parseInt(spouseAnswer.value));
+            }
+
+            if (!allAnswered) {
+                alert("Por favor, responde todas las preguntas antes de ver el resumen.");
+                return;
+            }
+            
+            document.getElementById('resultsContainer').classList.remove('hidden');
+            
+            const shortLabels = [
+                'Guía', 'Afecto', 'Respeto', 'Prioridad', 'Eternidad', 'Igualdad',
+                'Espíritu', 'Consejo', 'Entendimiento', 'Espacio', 'Dinero', 'Tareas',
+                'Talentos', 'Metas Esp.', 'Disciplina', 'Presidir'
+            ];
+
+            const radarData = {
+                labels: shortLabels,
+                datasets: [
+                    {
+                        label: 'Mis Puntos',
+                        data: selfScores,
+                        fill: true,
+                        backgroundColor: 'rgba(192, 132, 151, 0.2)',
+                        borderColor: 'rgba(192, 132, 151, 1)',
+                        pointBackgroundColor: 'rgba(192, 132, 151, 1)',
+                    },
+                    {
+                        label: 'Como creo que me ve mi cónyuge',
+                        data: spouseScores,
+                        fill: true,
+                        backgroundColor: 'rgba(112, 159, 176, 0.2)',
+                        borderColor: 'rgba(112, 159, 176, 1)',
+                        pointBackgroundColor: 'rgba(112, 159, 176, 1)',
+                    }
+                ]
+            };
+
+            if (resultsChartInstance) {
+                resultsChartInstance.destroy();
+            }
+
+            resultsChartInstance = new Chart(document.getElementById('resultsChart'), {
+                type: 'radar',
+                data: radarData,
+                options: {
+                    maintainAspectRatio: false,
+                    elements: {
+                        line: {
+                            borderWidth: 3
+                        }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: false
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 5,
+                            pointLabels: {
+                                font: {
+                                    size: 10
+                                }
+                            },
+                             ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                title: function(context) {
+                                    return assessmentQuestions[context[0].dataIndex];
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        const prompts = [
+            "Genera un ejercicio práctico breve para que una pareja casada fortalezca el amor y el respeto mutuo como compañeros iguales. Concéntrate en la consideración, la amabilidad y la expresión de afecto.",
+            "Propón un escenario práctico donde un esposo pueda presidir con rectitud en el hogar, promoviendo la unidad y la igualdad con su esposa, en lugar de dominar. Describe un ejemplo de cómo abordar una decisión o un conflicto.",
+            "Crea una situación o ejercicio práctico para que una pareja identifique y supere la tendencia a ejercer injusto dominio. El ejercicio debe fomentar la autoconciencia y el cambio de pensamiento.",
+            "Diseña un ejercicio práctico para que una pareja casada practique la toma de decisiones de común acuerdo, considerando las necesidades de ambos y de la familia, y llegando a soluciones aceptables para ambos."
+        ];
+
+        document.querySelectorAll('.generate-exercise-btn').forEach((button, index) => {
+            button.addEventListener('click', async () => {
+                const exerciseContainer = button.nextElementSibling;
+                const exerciseTextElement = exerciseContainer.querySelector('.exercise-text');
+                const loadingIndicator = exerciseContainer.querySelector('.llm-loading');
+
+                exerciseContainer.classList.remove('hidden');
+                exerciseTextElement.textContent = '';
+                loadingIndicator.classList.remove('hidden');
+
+                const prompt = prompts[index];
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = { contents: chatHistory };
+                const apiKey = "" 
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        exerciseTextElement.textContent = text;
+                    } else {
+                        exerciseTextElement.textContent = "Lo siento, no pude generar un ejercicio. Intenta de nuevo.";
+                    }
+                } catch (error) {
+                    console.error("Error al llamar a la API de Gemini:", error);
+                    exerciseTextElement.textContent = "Hubo un error al conectar con el generador de ejercicios. Por favor, revisa tu conexión.";
+                } finally {
+                    loadingIndicator.classList.add('hidden');
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>
